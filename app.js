@@ -79,7 +79,7 @@ function init() {
 
   // 모델 로드
 	loader = new GLTFLoader();
-	loadModel('model1.glb', (model) => {
+	loadModel('./model1.glb', (model) => {
 		model.userData.modelName = 'model1.glb';
 		currentModel = model;
 		scene.add(currentModel);
@@ -124,7 +124,7 @@ function loadModel(path, callback) {
 
 function changeModel() {
 	if (currentModel) {
-		const nextModelPath = currentModel.userData.modelName === 'model1.glb' ? 'model2.glb' : 'model1.glb';
+		const nextModelPath = currentModel.userData.modelName === 'model1.glb' ? './model2.glb' : './model1.glb';
 		
 		let startTime = performance.now();
 		let duration = 3000;
@@ -157,7 +157,7 @@ function changeModel() {
 
 		animateDissolve();
 	} else {
-		loadModel('model1.glb', (model) => {
+		loadModel('./model1.glb', (model) => {
 			model.userData.modelName = 'model1.glb';
 			currentModel = model;
 			scene.add(currentModel);
