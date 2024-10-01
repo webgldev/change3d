@@ -79,7 +79,7 @@ function init() {
 
   // 모델 로드
 	loader = new GLTFLoader();
-	loadModel('./model1.glb', (model) => {
+	loadModel('/change3d/model1.glb', (model) => {
 		model.userData.modelName = 'model1.glb';
 		currentModel = model;
 		scene.add(currentModel);
@@ -99,32 +99,41 @@ function init() {
 }
 
 function loadModel(path, callback) {
-	loader.load(path, function (gltf) {
-		const model = gltf.scene;
-		const box = new THREE.Box3().setFromObject(model);
-		const size = box.getSize(new THREE.Vector3());
-		const maxDim = Math.max(size.x, size.y, size.z);
-		const scale = 5 / maxDim;
+	console.log('Attempting to load model from:', path);
+	loader.load(path, 
+		function (gltf) {
+			console.log('Model loaded successfully:', path);
+			const model = gltf.scene;
+			const box = new THREE.Box3().setFromObject(model);
+			const size = box.getSize(new THREE.Vector3());
+			const maxDim = Math.max(size.x, size.y, size.z);
+			const scale = 5 / maxDim;
 
-		model.position.set(0, 0, 0);
-		model.scale.setScalar(scale);
-		model.traverse((child) => {
-			if (child.isMesh) {
-				child.geometry.center();
-				const customMaterial = createCustomShaderMaterial(child.material);
-				child.material = customMaterial;
-			}
-		});
+			model.position.set(0, 0, 0);
+			model.scale.setScalar(scale);
+			model.traverse((child) => {
+				if (child.isMesh) {
+					child.geometry.center();
+					const customMaterial = createCustomShaderMaterial(child.material);
+					child.material = customMaterial;
+				}
+			});
 
-		callback(model);
-	}, undefined, function (error) {
-		console.error('An error happened during loading model:', error);
-	});
+			callback(model);
+		},
+		function (xhr) {
+			console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+		},
+		function (error) {
+			console.error('An error happened during loading model:', error);
+			console.error('Failed to load model from path:', path);
+		}
+	);
 }
 
 function changeModel() {
 	if (currentModel) {
-		const nextModelPath = currentModel.userData.modelName === 'model1.glb' ? './model2.glb' : './model1.glb';
+		const nextModelPath = currentModel.userData.modelName === 'model1.glb' ? '/change3d/model2.glb' : '/change3d/model1.glb';
 		
 		let startTime = performance.now();
 		let duration = 3000;
@@ -157,7 +166,7 @@ function changeModel() {
 
 		animateDissolve();
 	} else {
-		loadModel('./model1.glb', (model) => {
+		loadModel('/change3d/model1.glb', (model) => {
 			model.userData.modelName = 'model1.glb';
 			currentModel = model;
 			scene.add(currentModel);
